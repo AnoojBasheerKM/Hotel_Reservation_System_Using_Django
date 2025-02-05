@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{%load static %}
+{% block content %}
+
+  <section class="mb-5 mt-3">
+    <div class="container">
+      <div class="row justify-content-center">
+          <div class="col-md-6">
+              <form class="p-4 border rounded shadow" action="{% url 'hotel_list' %}" method="get">
+                  <div class="mb-3">
+                      <label for="location" class="form-label">Enter Your Location</label>
+                      <input type="text" class="form-control" id="location" name="location" placeholder="Enter your location">
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100">Search Hotels</button>
+              </form>
+          </div>
+      </div>
+  </div>
+  
+  </section>
+  <hr>
+  
+  <section class="probootstrap-section m-5 p-5">
+    <div class="container">
+      <div class="row">
+
+        {%for hotel in hotels%}
+
+        <div class="col-md-4 col-sm-6 col-xs-12 rounded">
+          <div class="probootstrap-room rounded borde shadow">
+            {%if hotel.image %}
+            <img src="{{hotel.image.url }}" alt="Not available" class="img-responsive">
+            {%else%}
+            <img src="" alt="No Image Available" class="img-responsive">
+            {%endif%}
+            <div class="text">
+           
+              <h3>{{hotel.hotel_name}}</h3>
+              <h4>Room Type {{hotel.room_type}}</h4>
+              <h5>Address: {{hotel.address}}</h5>
+              <h5>location: {{hotel.location}}</h5>
+              <p>Starting from <strong>Rs {{hotel.price}}</strong></p>
+              <p><a href="{% url 'booking' uid=hotel.uid %}" class="btn btn-primary col-md-12 col-sm-12 col-xs-12" role="button">Book now for Rs{{hotel.price}}</a></p>
+              <div class="post-meta mb30">
+                <ul>
+                  <li><i class="icon-star"></i> 252 Reviews</li>
+                  <li> Status: {{hotel.room_status}}</li>
+                </div>
+                
+              </div>
+          </div>
+        </div>
+
+        {%endfor%}
+        
+
+      
+
+  {% endblock %}
+
+ 
