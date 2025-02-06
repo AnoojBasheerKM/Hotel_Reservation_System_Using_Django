@@ -15,7 +15,7 @@ class User(AbstractUser):
 
      def generate_otp(self):
         
-        self.otp = str(randint(1000,9000)) + str(self.id)
+        self.otp = str(randint(100000,999990)) + str(self.id)
 
         self.save()
         

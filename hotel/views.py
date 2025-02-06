@@ -7,24 +7,25 @@ from django.core.mail import send_mail
 from django.utils.decorators import method_decorator
 from hotel.decorators import signin_required
 from django.views.decorators.cache import never_cache
+from django.contrib import messages
 # Create your views here.
 
 decs=[signin_required,never_cache]
 
 
-# def send_otp_email(user):
+def send_otp_email(user):
     
-#     user.generate_otp()
+    user.generate_otp()
 
-#     subject = "verify your email"
+    subject = "verify your email"
 
-#     message = f"otp for account verification is {user.otp} otp valid for only 10 minutes "
+    message = f"otp for account verification is {user.otp} otp valid for only 10 minutes "
 
-#     from_email = ('')
+    from_email = 'anoojkm12@gmail.com'
 
-#     to_email = [user.email]
+    to_email = [user.email]
     
-#     send_mail(subject,message,from_email,to_email)
+    send_mail(subject,message,from_email,to_email)
 
 class UserRegistrationView(View):
     
@@ -48,11 +49,56 @@ class UserRegistrationView(View):
         
         if form_instance.is_valid():
             
-            form_instance.save()
+            user_obj = form_instance.save(commit=False)
+
+            user_obj.is_active = False
+
+            user_obj.save()
             
-            return redirect('signin')
+            send_otp_email(user_obj)
+            
+            return redirect('verify')
             
         return render(request, self.template_name,{"form":form_instance})
+    
+class VerifyEmailView(View):
+    
+    template_name = "verification.html"
+
+    def get(self,request,*args,**kwargs):
+        
+        return render(request,self.template_name)
+    
+    def post(self,request,*args,**kwargs):
+        
+        otp = request.POST.get("otp")
+        
+        print(otp)
+        
+        try:
+
+            user_obj = User.objects.get(otp=otp)
+        
+            user_obj.is_active = True
+        
+            user_obj.is_verified = True
+        
+            user_obj.otp = None
+        
+            user_obj.save()
+            
+            print("success")
+
+            return redirect("signin")
+        
+    
+        except:
+            
+            messages.error(request,"invalid OTP")
+            
+            print("not suiccess")
+
+            return render(request,self.template_name)
     
 class UserSignInView(View):
     
@@ -121,7 +167,7 @@ class HotelView(View):
         
         print(location)
         
-        hotels = Hotel.objects.filter(location=location) if location else Hotel.objects.all()
+        hotels = Hotel.objects.filter(location__iexact=location,room_status = 'available') if location else Hotel.objects.all()
         
         return render(request, self.template_name,{"hotels":hotels,"location":location})
     

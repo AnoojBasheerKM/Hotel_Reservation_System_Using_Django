@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+{%if messages%}
+
+    {%for m in messages%}
+
+    {{m}}
+
+    {%endfor%}
+
+    {%endif%}
+
+<section class="mb-5 mt-3">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form class="p-4 border rounded shadow" action="{% url 'verify' %}" method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="otp" class="form-label">Enter OTP</label>
+                        <input type="text" class="form-control text-center fw-bold" id="otp" name="otp" 
+                               placeholder="Enter the 6-digit OTP" required maxlength="6" pattern="\d{5}">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Verify OTP</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}
