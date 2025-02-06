@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{%load static%}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+
+        {% if bookings %}
+
+        {% for b in bookings %}
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 rounded mb-4">
+            
+            
+            <div class="card m-3 p-2" style="width: 100%;">
+                {% if b.hotel.image %}
+                <img src="{{ b.hotel.image.url }}" class="card-img-top" alt="{{ b.hotel.hotel_name }}">
+                {% else %}
+                <img src="" class="card-img-top" alt="Not Available">
+                {% endif %}
+               
+                
+                <div class="card-body">
+                  <h5 class="card-title fw-bold">{{b.hotel}}</h5>
+                  <p class="card-text">{{b.location}}</p>
+                  <p class="card-text">{{b.hotel.room_type}}</p>
+                  <p class="card-text">{{b.check_in}}</p>
+                  <p class="card-text">{{b.checkout}}</p>
+                  <form action="{% url 'cancel' uid=b.uid %}" method="POST">
+                    {% csrf_token %}
+                  <button type="submit" class="btn btn-primary mt-5">Cancel Booking</button> 
+                </form>
+                </div>
+              </div>
+              
+
+              
+            </div>
+
+            
+            {%endfor%}
+
+        {%else%}
+        <div class="col-12 text-center" style="background-image: url({%static 'img/bg5.jpg'%}); background-size: cover; height: 100vh; padding: 100px 0;">
+            <h2 class="text-white fs-1">No Bookings Currently</h2>
+            <p class="text-white fs-3">It seems you don't have any bookings at the moment. Please make a booking!</p>
+        </div>
+    {% endif %}
+
+    
+            </div>
+
+        </div>
+<!-- Add your content here -->
+{% endblock %}

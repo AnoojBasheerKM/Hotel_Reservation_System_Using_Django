@@ -74,10 +74,10 @@ class Booking(BaseModel):
     is_confirmed = models.BooleanField(default=False)
     is_paid = models.BooleanField(default=False) 
     
-    payment = [
-        ("online","online"),
-        ("prepaid","prepaid"),
-    ]
+    # payment = [
+    #     ("online","online"),
+    #     ("prepaid","prepaid"),
+    # ]
     # payment_method = models.CharField(max_length=50,choices=payment,default="online",null=True)
     # rzp_id = models.CharField(max_length=100,null=True)
      
@@ -85,5 +85,5 @@ class Booking(BaseModel):
     
     
     def __str__(self):
-        return f"{self.customer.username} booked {self.hotel.hotel_name} - {self.room.room_type}"
+        return f"{self.customer.username} booked {self.hotel.hotel_name} - {self.hotel.room_type}"
     

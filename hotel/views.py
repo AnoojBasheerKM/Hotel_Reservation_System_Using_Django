@@ -3,8 +3,28 @@ from django.views.generic import View
 from hotel.models import User,Hotel,Booking
 from hotel.forms import UserForm,LoginForm,BookingForm
 from django.contrib.auth import authenticate,login,logout
-
+from django.core.mail import send_mail
+from django.utils.decorators import method_decorator
+from hotel.decorators import signin_required
+from django.views.decorators.cache import never_cache
 # Create your views here.
+
+decs=[signin_required,never_cache]
+
+
+# def send_otp_email(user):
+    
+#     user.generate_otp()
+
+#     subject = "verify your email"
+
+#     message = f"otp for account verification is {user.otp} otp valid for only 10 minutes "
+
+#     from_email = ('')
+
+#     to_email = [user.email]
+    
+#     send_mail(subject,message,from_email,to_email)
 
 class UserRegistrationView(View):
     
@@ -68,7 +88,8 @@ class UserSignInView(View):
 
                 
         return render(request, self.template, {"form": form})
-    
+  
+@method_decorator(decs,name="dispatch")  
 class UserSignoutView(View):
     
     def get(self,request,*args,**kwargs):
@@ -89,7 +110,7 @@ class Home(View):
         return render(request, self.template_name)
 
 
-    
+
 class HotelView(View):
     
     template_name = "hotel_list.html"
@@ -103,7 +124,8 @@ class HotelView(View):
         hotels = Hotel.objects.filter(location=location) if location else Hotel.objects.all()
         
         return render(request, self.template_name,{"hotels":hotels,"location":location})
-
+    
+@method_decorator(decs,name="dispatch")
 class BookingView(View):
     
     template_name = "booking.html"
@@ -114,7 +136,7 @@ class BookingView(View):
         
         hotel = get_object_or_404(Hotel,uid = id)
         
-        form = BookingForm(initial={"hotel":hotel.hotel_name,"location":hotel.location})
+        form = BookingForm(initial={"hotel":hotel.uid,"hotel_name":hotel.hotel_name,"location":hotel.location})
         
         return render(request, self.template_name,{"form":form,"hotel":hotel})
     
@@ -124,25 +146,75 @@ class BookingView(View):
         
         hotel = get_object_or_404(Hotel,uid=id)
         
-        form = BookingForm(request.POST)
+        data = request.POST
+        
+        form = BookingForm(data)
+        
+        # print(id)
+        
+        # print(data)
 
+            
         if form.is_valid():
             
-            if form.is_valid():
+           
                 
-                booking = form.save(commit=False)
-                
-                booking.customer = request.user
-                
-                booking.is_confirmed = True 
-               
-                booking.is_paid = False
-                
-                booking.save()
-                
-                return   HttpResponse("booking is successfull")
+            booking = form.save(commit=False)
             
-            return render(request, self.template_name, {"form": form, "hotel": hotel})
+            booking.hotel = hotel
+                
+            booking.customer = request.user
+                
+            booking.is_confirmed = True 
+               
+            booking.is_paid = False
+                
+            booking.save()
+            
+            hotel.is_booked = True
+            
+            hotel.room_status = "booked"
+            
+            hotel.save()
+            
+            print("validation success")
+                
+            return redirect('booking_list')
+        
+        print("validation failed")
+           
+        return render(request, self.template_name, {"form": form, "hotel": hotel})
+    
+@method_decorator(decs,name="dispatch")
+class UserBookingListView(View):
+     
+     template = 'Your_bookings.html'
+     
+     def get(self,request,*args,**kwargs):
+         
+         bookings = Booking.objects.filter(customer=request.user)
+         
+         return render(request,self.template,{"bookings":bookings})
+     
+@method_decorator(decs,name="dispatch")     
+class CancelBookingView(View):
+    
+    def post(self,request,*args,**kwargs):
+        
+        id = kwargs.get("uid")
+        
+        booking = get_object_or_404(Booking, customer=request.user, uid=id)
+        
+        booking.is_confirmed = False
+        
+        booking.save()
+        
+        booking.delete()
+        
+        print("booking cancelled and deleted")
+        
+        
+        return redirect('booking_list')
         
 
         
