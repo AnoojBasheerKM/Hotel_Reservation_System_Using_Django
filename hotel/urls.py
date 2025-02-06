@@ -11,6 +11,8 @@ urlpatterns = [
     path('home/',views.Home.as_view(), name='home'),
     path('hotels/',views.HotelView.as_view(), name='hotel_list'),
     path('booking/<uuid:uid>/',views.BookingView.as_view(), name='booking'),
+    path('bookinglist/',views.UserBookingListView.as_view(),name='booking_list'),
+    path('cancel-booking/<uuid:uid>',views.CancelBookingView.as_view(),name="cancel")
    
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

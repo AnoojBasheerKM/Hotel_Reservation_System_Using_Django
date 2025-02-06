@@ -127,3 +127,13 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'hotel.User'
+
+EMAIL_HOST = ('')
+
+EMAIL_USE_TLS = ('')
+
+EMAIL_PORT = ('')
+
+EMAIL_HOST_USER = ('')
+
+EMAIL_HOST_PASSWORD = ('')

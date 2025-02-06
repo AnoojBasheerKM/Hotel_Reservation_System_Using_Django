@@ -37,19 +37,19 @@
 
         <nav role="navigation" class="probootstrap-nav hidden-xs">
           <ul class="probootstrap-main-nav">
-            <li class="active"><a href="{%url 'home' %}">Home</a></li>
-            <li><a href="">Your Bookings</a></li>
+            <li><a href="{%url 'home' %}">Home</a></li>
+            <li><a href="{% url 'booking_list'%}">Your Bookings</a></li>
             <li><a href="{% url 'hotel_list'%}">Hotels</a></li>
             <li class="hidden-xs probootstrap-logo-center"><a href="index.html"><img src="{% static 'img/logo_md.png'%}" class="hires" width="181" height="50" alt="Free Bootstrap Template by uicookies.com"></a></li>
-            <li><a href="">Book Hotel</a></li>
+            
            
             <li><a href="{%url 'signup'%}">Register</a></li>
              
             <li>
               {% if request.user.is_authenticated %}
-                  <a class="btn btn-outline-light"" href="{% url 'logout' %}">Logout {{request.user}}</a>
+                  <a class="btn btn-outline-dark btn-lg" href="{% url 'logout' %}">Logout {{request.user}}</a>
               {% else %}
-                  <a class="btn btn-outline-light"" href="{% url 'signin' %}">Login</a>
+                  <a class="btn btn-outline-light btn-lg" href="{% url 'signin' %}">Login</a>
               {% endif %}
             </li>
           
